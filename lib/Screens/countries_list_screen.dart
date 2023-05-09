@@ -1,7 +1,8 @@
-import 'package:covid_tracker/View/detail_screen.dart';
 import 'package:covid_tracker/APIModel/covid_status_report.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
+
+import 'country_individual_screen.dart';
 
 class CountriesListScreen extends StatefulWidget {
   const CountriesListScreen({Key? key}) : super(key: key);
@@ -25,8 +26,7 @@ class _CountriesListScreenState extends State<CountriesListScreen> {
         child: Column(
           children: [
             Padding(
-              padding:
-                  const EdgeInsets.symmetric( horizontal: 12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: TextFormField(
                 controller: searchController,
                 decoration: InputDecoration(
@@ -49,7 +49,9 @@ class _CountriesListScreenState extends State<CountriesListScreen> {
                 },
               ),
             ),
-            SizedBox(height: 5,),
+            SizedBox(
+              height: 5,
+            ),
             Expanded(
               child: FutureBuilder(
                   future: covidRecords.countriesListApi(),
@@ -116,7 +118,7 @@ class _CountriesListScreenState extends State<CountriesListScreen> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => DetailScreen(
+                builder: (context) => country_individual_screen(
                       image: snapshot.data![index]['countryInfo']['flag'],
                       name: snapshot.data![index]['country'],
                       totalCases: snapshot.data![index]['cases'],
@@ -130,21 +132,26 @@ class _CountriesListScreenState extends State<CountriesListScreen> {
       },
       child: ListTile(
         leading: SizedBox(
-          height: 40,
-          width: 50,
-          child: Image.network(snapshot.data![index]['countryInfo']['flag'],fit: BoxFit.contain,
-             loadingBuilder: (BuildContext context, Widget child,
-                ImageChunkEvent? loadingProgress) {
-              if(loadingProgress!=null) {
-                return Center(child: CircularProgressIndicator(color: Colors.deepPurple));
-                }else {
-                return child;
-              }
-            },
-            errorBuilder: (BuildContext context,Object exception,StackTrace? stacktrace){
-              return Center(child: const Text("This image can't longer be saved on storage"));
-            },)
-          ),
+            height: 40,
+            width: 50,
+            child: Image.network(
+              snapshot.data![index]['countryInfo']['flag'],
+              fit: BoxFit.contain,
+              loadingBuilder: (BuildContext context, Widget child,
+                  ImageChunkEvent? loadingProgress) {
+                if (loadingProgress != null) {
+                  return Center(
+                      child: CircularProgressIndicator(color: Colors.white));
+                } else {
+                  return child;
+                }
+              },
+              errorBuilder: (BuildContext context, Object exception,
+                  StackTrace? stacktrace) {
+                return Center(
+                    child: CircularProgressIndicator(color: Colors.white));
+              },
+            )),
         title: Text(snapshot.data![index]['country']),
         subtitle:
             Text("Effected: " + snapshot.data![index]['cases'].toString()),
