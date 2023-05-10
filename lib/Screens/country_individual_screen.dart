@@ -39,6 +39,7 @@ class _country_individual_screenState extends State<country_individual_screen> {
         titleSpacing: 1.5,
         shadowColor: Colors.white,
         elevation: 8,
+<<<<<<< HEAD
         title: FittedBox(
           fit: BoxFit.fitWidth,
           child: Padding(
@@ -69,6 +70,32 @@ class _country_individual_screenState extends State<country_individual_screen> {
               ],
             ),
           ),
+=======
+        title: Stack(
+          children: <Widget>[
+            // Stroked text as border.
+            Text(
+              widget.name.toUpperCase(),
+              style: TextStyle(
+                letterSpacing: 2,
+                fontSize: 28,
+                foreground: Paint()
+                  ..style = PaintingStyle.stroke
+                  ..strokeWidth = 5
+                  ..color = Colors.blue[700]!,
+              ),
+            ),
+            // Solid text as fill.
+            Text(
+              widget.name.toUpperCase(),
+              style: TextStyle(
+                letterSpacing: 2,
+                fontSize: 28,
+                color: Colors.grey[300],
+              ),
+            ),
+          ],
+>>>>>>> origin/master
         ),
         centerTitle: true,
         backgroundColor: Colors.lightBlue,
@@ -82,6 +109,7 @@ class _country_individual_screenState extends State<country_individual_screen> {
             alignment: Alignment.center,
             image: NetworkImage(widget.image),
             fit: BoxFit.fitWidth,
+<<<<<<< HEAD
             onError: (Object exception, StackTrace? stacktrace) {
               CircularProgressIndicator(
                 color:Colors.blue
@@ -91,6 +119,12 @@ class _country_individual_screenState extends State<country_individual_screen> {
         ),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+=======
+          ),
+        ),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 8.5, sigmaY: 8.5),
+>>>>>>> origin/master
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
