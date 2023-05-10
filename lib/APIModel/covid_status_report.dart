@@ -2,7 +2,6 @@
 import 'dart:convert';
 import 'package:covid_tracker/APIModel/app_url.dart';
 import 'package:covid_tracker/JsonModel/world_report.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 
@@ -13,7 +12,6 @@ class CovidReport {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-      debugPrint(data['records'].toString());
       return WorldCovidStatus.fromJson(data);
     } else {
       throw Exception('Error');

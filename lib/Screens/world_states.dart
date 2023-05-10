@@ -73,10 +73,22 @@ class _WorldStatesState extends State<WorldStates>
                   builder: (context, AsyncSnapshot<WorldCovidStatus> snapshot) {
                     debugPrint(snapshot.hasData.toString());
                     if (!snapshot.hasData) {
-                      return SpinKitFadingCircle(
-                        color: Colors.blue,
-                        size: 50.0,
-                        controller: _controller,
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SpinKitFadingCircle(
+                              color: Colors.blue,
+                              size: 50.0,
+                              controller: _controller,
+                            ),
+                            SizedBox(height: 8,),
+                            Text('Error in fetching the data through server',style:TextStyle(color:Colors.blue)),
+                            SizedBox(height: 8,),
+                            Text('If it is not start in a minute then please restart the app',style:TextStyle(color:Colors.blue))
+                          ],
+                        ),
                       );
                     } else {
                       deathRecords =

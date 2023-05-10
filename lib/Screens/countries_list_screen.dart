@@ -22,91 +22,107 @@ class _CountriesListScreenState extends State<CountriesListScreen> {
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: TextFormField(
-                controller: searchController,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50.0),
+      body: RefreshIndicator(
+        color:Colors.blue,
+        backgroundColor: Colors.white,
+        onRefresh: () {
+          return Future.delayed(Duration(seconds: 1), () {
+            final snackBar = SnackBar(
+              content: Text('Screen Refreshed',
+                  style: TextStyle(color: Colors.black)),
+              elevation: 4,
+              backgroundColor: Colors.blueGrey.shade50,
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            setState(() {});
+          });
+        },
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: TextFormField(
+                  controller: searchController,
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50.0),
+                    ),
+                    hintText: 'Search with country name',
+                    suffixIcon: searchController.text.isEmpty
+                        ? const Icon(Icons.search)
+                        : GestureDetector(
+                            onTap: () {
+                              searchController.text = "";
+                              setState(() {});
+                            },
+                            child: const Icon(Icons.clear)),
                   ),
-                  hintText: 'Search with country name',
-                  suffixIcon: searchController.text.isEmpty
-                      ? const Icon(Icons.search)
-                      : GestureDetector(
-                          onTap: () {
-                            searchController.text = "";
-                            setState(() {});
-                          },
-                          child: const Icon(Icons.clear)),
+                  onChanged: (value) {
+                    setState(() {});
+                  },
                 ),
-                onChanged: (value) {
-                  setState(() {});
-                },
               ),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Expanded(
-              child: FutureBuilder(
-                  future: covidRecords.countriesListApi(),
-                  builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-                    if (!snapshot.hasData) {
-                      return ListView.builder(
-                        itemCount: 8,
-                        itemBuilder: (context, index) {
-                          return Shimmer(
-                            duration: const Duration(seconds: 3),
-                            interval: const Duration(seconds: 5),
-                            color: Colors.grey,
-                            colorOpacity: 0.5,
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  leading: Container(
-                                    height: 50,
-                                    width: 50,
-                                    color: Colors.white,
-                                  ),
-                                  title: Container(
-                                    width: 100,
-                                    height: 8.0,
-                                    color: Colors.white,
-                                  ),
-                                  subtitle: Container(
-                                    width: double.infinity,
-                                    height: 8.0,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    } else {
-                      return ListView.builder(
-                          itemCount: snapshot.data!.length,
+              SizedBox(
+                height: 5,
+              ),
+              Expanded(
+                child: FutureBuilder(
+                    future: covidRecords.countriesListApi(),
+                    builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                      if (!snapshot.hasData) {
+                        return ListView.builder(
+                          itemCount: 9,
                           itemBuilder: (context, index) {
-                            String name = snapshot.data![index]['country'];
-                            if (searchController.text.isEmpty) {
-                              return countryEffect(snapshot, index);
-                            } else if (name.toLowerCase().contains(
-                                searchController.text.toLowerCase())) {
-                              return countryEffect(snapshot, index);
-                            } else {
-                              return Container();
-                            }
-                          });
-                    }
-                  }),
-            )
-          ],
+                            return Shimmer(
+                              duration: const Duration(seconds: 3),
+                              interval: const Duration(seconds: 5),
+                              color: Colors.grey,
+                              colorOpacity: 0.5,
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    leading: Container(
+                                      height: 50,
+                                      width: 50,
+                                      color: Colors.white,
+                                    ),
+                                    title: Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    subtitle: Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              String name = snapshot.data![index]['country'];
+                              if (searchController.text.isEmpty) {
+                                return countryEffect(snapshot, index);
+                              } else if (name.toLowerCase().contains(
+                                  searchController.text.toLowerCase()) && snapshot.hasData) {
+                                return countryEffect(snapshot, index);
+                              } else {
+                                return Container();
+                              }
+                            });
+                      }
+                    }),
+              )
+            ],
+          ),
         ),
       ),
     );
