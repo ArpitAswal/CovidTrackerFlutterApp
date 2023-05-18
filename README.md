@@ -9,10 +9,10 @@
 
 ![photo_2023-05-18_14-58-07](https://github.com/ArpitAswal/Covid-19-App_API_Flutter/assets/87036588/2ffdaa2a-1305-43ec-a4a8-01a8bd9face0)
 
-3. Now we have this main screen, In this, we have-
-. One pie chart which shows the result in percentage
-. some box shape space under that space we can see some records regarding world covid cases
-. at last, we have a button by clicking on that we can select the individual country
+3. Now we have this main screen, In this, we have -
+a). One pie chart which shows the result in percentage
+b). some box shape space under that space we can see some records regarding world covid cases
+c). at last, we have a button by clicking on that we can select the individual country
 
 ![photo_2023-05-18_14-58-19](https://github.com/ArpitAswal/Covid-19-App_API_Flutter/assets/87036588/c6f1cb1e-f2cd-4e52-a373-f9d998f98b5b)
 
