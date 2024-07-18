@@ -1,20 +1,14 @@
 import 'dart:core';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
-class country_individual_screen extends StatefulWidget {
-  String image;
-  String name;
-  int totalCases,
-      totalDeaths,
-      totalRecovered,
-      active,
-      critical,
-      todayRecovered,
-      test;
+class IndividualCountry extends StatefulWidget {
+  final String image;
+  final String name;
+  final int totalCases, totalDeaths, totalRecovered, active, critical, test;
 
-  country_individual_screen({
+  const IndividualCountry({
+    Key? key,
     required this.image,
     required this.name,
     required this.totalCases,
@@ -22,16 +16,14 @@ class country_individual_screen extends StatefulWidget {
     required this.totalRecovered,
     required this.active,
     required this.critical,
-    required this.todayRecovered,
     required this.test,
-  });
+  }) : super(key: key);
 
   @override
-  _country_individual_screenState createState() =>
-      _country_individual_screenState();
+  _IndividualCountryState createState() => _IndividualCountryState();
 }
 
-class _country_individual_screenState extends State<country_individual_screen> {
+class _IndividualCountryState extends State<IndividualCountry> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,10 +31,10 @@ class _country_individual_screenState extends State<country_individual_screen> {
         titleSpacing: 1.5,
         shadowColor: Colors.white,
         elevation: 8,
-         title: FittedBox(
+        title: FittedBox(
           fit: BoxFit.fitWidth,
           child: Padding(
-            padding: const EdgeInsets.only(right:8),
+            padding: const EdgeInsets.only(right: 8),
             child: Stack(
               children: <Widget>[
                 // Stroked text as border.
@@ -69,7 +61,7 @@ class _country_individual_screenState extends State<country_individual_screen> {
               ],
             ),
           ),
-         ),
+        ),
         centerTitle: true,
         backgroundColor: Colors.lightBlue,
       ),
@@ -83,10 +75,8 @@ class _country_individual_screenState extends State<country_individual_screen> {
             image: NetworkImage(widget.image),
             fit: BoxFit.fitWidth,
             onError: (Object exception, StackTrace? stacktrace) {
-              CircularProgressIndicator(
-                color:Colors.blue
-              );
-              },
+              const CircularProgressIndicator(color: Colors.blue);
+            },
           ),
         ),
         child: BackdropFilter(
@@ -109,7 +99,7 @@ class _country_individual_screenState extends State<country_individual_screen> {
                 child: cardwidget(Colors.green, 'TotalRecovered',
                     widget.totalRecovered.toString()),
               ),
-              SizedBox(height: 285),
+              const SizedBox(height: 285),
               Align(
                 alignment: Alignment.centerLeft,
                 child: cardwidget(Colors.redAccent, 'TotalDeaths',
@@ -158,11 +148,11 @@ class _country_individual_screenState extends State<country_individual_screen> {
               ),
               Text(
                 '$text:',
-                style: TextStyle(fontSize: 18, color: Colors.blueAccent),
+                style: const TextStyle(fontSize: 18, color: Colors.blueAccent),
               ),
               Text(
                 '$number',
-                style: TextStyle(
+                style: const TextStyle(
                     fontSize: 18,
                     color: Colors.black87,
                     fontWeight: FontWeight.w600),

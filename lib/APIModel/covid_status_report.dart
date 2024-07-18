@@ -1,8 +1,9 @@
 
 import 'dart:convert';
-import 'package:covid_tracker/APIModel/app_url.dart';
-import 'package:covid_tracker/JsonModel/world_report.dart';
 import 'package:http/http.dart' as http;
+
+import '../JsonModel/world_report.dart';
+import 'app_url.dart';
 
 
 class CovidReport {
@@ -19,7 +20,7 @@ class CovidReport {
   }
 
   Future<List<dynamic>> countriesListApi() async {
-    var data ;
+    List<dynamic> data ;
     final response = await http.get(Uri.parse(AppUrl.CountiesAPI));
     if (response.statusCode == 200) {
        data = jsonDecode(response.body.toString());

@@ -1,9 +1,9 @@
-import 'package:covid_tracker/APIModel/covid_status_report.dart';
-import 'package:covid_tracker/Screens/world_states.dart';
+import 'package:CovidTracker/APIModel/covid_status_report.dart';
+import 'package:CovidTracker/Screens/world_states.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
-import 'country_individual_screen.dart';
+import 'individual_country.dart';
 
 class CountriesListScreen extends StatefulWidget {
   const CountriesListScreen({Key? key}) : super(key: key);
@@ -19,23 +19,19 @@ class _CountriesListScreenState extends State<CountriesListScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: ()async{
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>WorldStates()));
+      onWillPop: () async {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const WorldStates()));
         return true;
       },
       child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          automaticallyImplyLeading: false,
-        ),
         body: RefreshIndicator(
-          color:Colors.blue,
+          color: Colors.blue,
           backgroundColor: Colors.white,
           onRefresh: () {
-            return Future.delayed(Duration(seconds: 1), () {
+            return Future.delayed(const Duration(seconds: 1), () {
               final snackBar = SnackBar(
-                content: Text('Screen Refreshed',
+                content: const Text('Screen Refreshed',
                     style: TextStyle(color: Colors.black)),
                 elevation: 4,
                 backgroundColor: Colors.blueGrey.shade50,
@@ -48,11 +44,13 @@ class _CountriesListScreenState extends State<CountriesListScreen> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12.0, vertical: 12.0),
                   child: TextFormField(
                     controller: searchController,
                     decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 20),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(50.0),
                       ),
@@ -71,13 +69,14 @@ class _CountriesListScreenState extends State<CountriesListScreen> {
                     },
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
                 Expanded(
                   child: FutureBuilder(
                       future: covidRecords.countriesListApi(),
-                      builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                      builder:
+                          (context, AsyncSnapshot<List<dynamic>> snapshot) {
                         if (!snapshot.hasData) {
                           return ListView.builder(
                             itemCount: 9,
@@ -119,7 +118,8 @@ class _CountriesListScreenState extends State<CountriesListScreen> {
                                 if (searchController.text.isEmpty) {
                                   return countryEffect(snapshot, index);
                                 } else if (name.toLowerCase().contains(
-                                    searchController.text.toLowerCase()) && snapshot.hasData) {
+                                        searchController.text.toLowerCase()) &&
+                                    snapshot.hasData) {
                                   return countryEffect(snapshot, index);
                                 } else {
                                   return Container();
@@ -142,7 +142,7 @@ class _CountriesListScreenState extends State<CountriesListScreen> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => country_individual_screen(
+                builder: (context) => IndividualCountry(
                       image: snapshot.data![index]['countryInfo']['flag'],
                       name: snapshot.data![index]['country'],
                       totalCases: snapshot.data![index]['cases'],
@@ -150,7 +150,6 @@ class _CountriesListScreenState extends State<CountriesListScreen> {
                       totalDeaths: snapshot.data![index]['deaths'],
                       active: snapshot.data![index]['active'],
                       test: snapshot.data![index]['tests'],
-                      todayRecovered: snapshot.data![index]['todayRecovered'],
                       critical: snapshot.data![index]['critical'],
                     )));
       },
@@ -164,7 +163,7 @@ class _CountriesListScreenState extends State<CountriesListScreen> {
               loadingBuilder: (BuildContext context, Widget child,
                   ImageChunkEvent? loadingProgress) {
                 if (loadingProgress != null) {
-                  return Center(
+                  return const Center(
                       child: CircularProgressIndicator(color: Colors.white));
                 } else {
                   return child;
@@ -172,7 +171,7 @@ class _CountriesListScreenState extends State<CountriesListScreen> {
               },
               errorBuilder: (BuildContext context, Object exception,
                   StackTrace? stacktrace) {
-                return Center(
+                return const Center(
                     child: CircularProgressIndicator(color: Colors.white));
               },
             )),

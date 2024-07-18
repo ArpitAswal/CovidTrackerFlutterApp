@@ -1,5 +1,6 @@
+import 'dart:async';
 import 'dart:core';
-import 'package:covid_tracker/APIModel/covid_status_report.dart';
+import 'package:CovidTracker/APIModel/covid_status_report.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -17,12 +18,32 @@ class WorldStates extends StatefulWidget {
 
 class _WorldStatesState extends State<WorldStates>
     with TickerProviderStateMixin {
-  @override
   late String date;
+  late BigInt deathRecords;
+  late BigInt activeRecords;
+  late BigInt recoverRecords;
+  late BigInt totalRecords;
+  late BigInt testRecords;
+  late BigInt criticalRecords;
+
   late final AnimationController _controller = AnimationController(
     duration: const Duration(milliseconds: 1000),
     vsync: this,
   )..repeat();
+
+  bool showChild = false;
+  late Timer timer;
+
+  @override
+  void initState() {
+    super.initState();
+    date = DateFormat.yMMMMEEEEd().format(DateTime.now());
+    timer = Timer(const Duration(seconds: 5), () {
+      setState(() {
+        showChild = true;
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -30,16 +51,9 @@ class _WorldStatesState extends State<WorldStates>
     super.dispose();
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    date = DateFormat.yMMMMEEEEd().format(DateTime.now());
-  }
-
   CovidReport covidRecords = CovidReport();
 
-  final colorList = <Color>[
+  final colorList = const <Color>[
     Color(0xffda3737),
     Color(0xff1aa260),
     Color(0xff4285F4),
@@ -47,13 +61,6 @@ class _WorldStatesState extends State<WorldStates>
     Color(0xff54ffce),
     Color(0xffffa507)
   ];
-
-  var deathRecords;
-  var activeRecords;
-  var recoverRecords;
-  var totalRecords;
-  var testRecords;
-  var criticalRecords;
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +78,6 @@ class _WorldStatesState extends State<WorldStates>
               child: FutureBuilder(
                   future: covidRecords.fetchWorldRecords(),
                   builder: (context, AsyncSnapshot<WorldCovidStatus> snapshot) {
-                    debugPrint(snapshot.hasData.toString());
                     if (!snapshot.hasData) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 18.0),
@@ -83,35 +89,44 @@ class _WorldStatesState extends State<WorldStates>
                               size: 50.0,
                               controller: _controller,
                             ),
-                            SizedBox(height: 8,),
-                            Text('Error in fetching the data through server',style:TextStyle(color:Colors.blue)),
-                            SizedBox(height: 8,),
-                            Text('If it is not start in a minute then please restart the app',style:TextStyle(color:Colors.blue))
+                            AnimatedOpacity(
+                              opacity: showChild ? 1.0 : 0.0,
+                              duration: const Duration(seconds: 1),
+                              child: const Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+                                  Text(
+                                      'Error in fetching the data through server',
+                                      style: TextStyle(color: Colors.blue)),
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+                                  Text(
+                                      'If it is not start in a 10 seconds then please restart the app',
+                                      style: TextStyle(color: Colors.blue))
+                                ],
+                              ),
+                            )
                           ],
                         ),
                       );
                     } else {
                       deathRecords =
-                          (int.parse(snapshot.data!.deaths.toString()))
-                              .toString();
+                          BigInt.parse(snapshot.data!.deaths.toString());
                       activeRecords =
-                          (int.parse(snapshot.data!.active.toString()) +
-                                  22419302)
-                              .toString();
+                          BigInt.parse(snapshot.data!.active.toString());
                       totalRecords =
-                          ((int.parse(snapshot.data!.cases.toString()) -
-                                      677944494) *
-                                  10)
-                              .toString();
+                          BigInt.parse(snapshot.data!.cases.toString());
                       recoverRecords =
-                          (int.parse(snapshot.data!.recovered.toString()) -
-                                  610363796)
-                              .toString();
+                          BigInt.parse(snapshot.data!.recovered.toString());
                       testRecords =
-                          ((int.parse(snapshot.data!.tests.toString()) -
-                                  6945457504))
-                              .toString();
-                      criticalRecords = '3128269';
+                          BigInt.parse(snapshot.data!.tests.toString());
+                      criticalRecords =
+                          BigInt.parse(snapshot.data!.critical.toString());
 
                       return Column(
                         children: [
@@ -145,7 +160,7 @@ class _WorldStatesState extends State<WorldStates>
                                     fit: BoxFit.cover,
                                   )),
                             ),
-                            Positioned(
+                            const Positioned(
                               top: 10,
                               left: 15,
                               child: Text(
@@ -154,7 +169,7 @@ class _WorldStatesState extends State<WorldStates>
                                     fontWeight: FontWeight.w500, fontSize: 24),
                               ),
                             ),
-                            Positioned(
+                            const Positioned(
                               top: 50,
                               left: 18,
                               child: Text(
@@ -168,7 +183,7 @@ class _WorldStatesState extends State<WorldStates>
                               left: 18,
                               child: Text(
                                 'updated at $date',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontWeight: FontWeight.w300, fontSize: 18),
                               ),
                             ),
@@ -177,14 +192,20 @@ class _WorldStatesState extends State<WorldStates>
                               right: 30,
                               child: PieChart(
                                   dataMap: {
-                                    'Death': double.parse(deathRecords),
-                                    'Recover': double.parse(recoverRecords),
-                                    'TotalCase': double.parse(totalRecords),
-                                    'Active': double.parse(activeRecords),
-                                    'Tests': double.parse(testRecords),
-                                    'Critical': double.parse(criticalRecords)
+                                    'Death':
+                                        double.parse(deathRecords.toString()),
+                                    'Recover':
+                                        double.parse(recoverRecords.toString()),
+                                    'TotalCase':
+                                        double.parse(totalRecords.toString()),
+                                    'Active':
+                                        double.parse(activeRecords.toString()),
+                                    'Tests':
+                                        double.parse(testRecords.toString()),
+                                    'Critical':
+                                        double.parse(criticalRecords.toString())
                                   },
-                                  animationDuration: Duration(seconds: 2),
+                                  animationDuration: const Duration(seconds: 2),
                                   chartLegendSpacing: 12,
                                   chartRadius:
                                       MediaQuery.of(context).size.width / 3.2,
@@ -221,12 +242,12 @@ class _WorldStatesState extends State<WorldStates>
                                     Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 10.0),
-                                        child: cardwidget(Colors.yellow,
+                                        child: cardWidget(Colors.yellow,
                                             'ActiveCases', '$activeRecords')),
                                     Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 10.0),
-                                        child: cardwidget(Colors.blue,
+                                        child: cardWidget(Colors.blue,
                                             'TotalCases', '$totalRecords')),
                                   ],
                                 ),
@@ -237,12 +258,12 @@ class _WorldStatesState extends State<WorldStates>
                                     Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 10.0),
-                                        child: cardwidget(Colors.green,
+                                        child: cardWidget(Colors.green,
                                             'RecoverCases', '$recoverRecords')),
                                     Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 10.0),
-                                        child: cardwidget(Colors.red,
+                                        child: cardWidget(Colors.red,
                                             'DeathCases', '$deathRecords')),
                                   ],
                                 ),
@@ -253,12 +274,12 @@ class _WorldStatesState extends State<WorldStates>
                                     Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 10.0),
-                                        child: cardwidget(Colors.tealAccent,
+                                        child: cardWidget(Colors.tealAccent,
                                             'TestCases', '$testRecords')),
                                     Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 10.0),
-                                        child: cardwidget(
+                                        child: cardWidget(
                                             Colors.orange,
                                             'CriticalCases',
                                             '$criticalRecords')),
@@ -267,25 +288,27 @@ class _WorldStatesState extends State<WorldStates>
                                 Center(
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                        padding:
-                                            EdgeInsets.symmetric(vertical: 2),
-                                        elevation: 7,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 2),
+                                        elevation: 4,
                                         shadowColor: Colors.lightBlue,
-                                        maximumSize: Size(170, 40),
-                                        shape: RoundedRectangleBorder(
+                                        maximumSize: const Size(170, 40),
+                                        shape: const RoundedRectangleBorder(
                                             //borderRadius: BorderRadius.all(Radius.circular(21)),
                                             side: BorderSide(
                                                 color: Colors.white,
                                                 width: 1.5)),
                                         backgroundColor: Colors.blue),
-                                    child: Center(
-                                        child: Text('Individual Country')),
+                                    child: const Center(
+                                        child: Text('Individual Country',
+                                            style: TextStyle(
+                                                color: Colors.white))),
                                     onPressed: () {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  CountriesListScreen()));
+                                                  const CountriesListScreen()));
                                     },
                                   ),
                                 )
@@ -299,7 +322,7 @@ class _WorldStatesState extends State<WorldStates>
         ));
   }
 
-  cardwidget(Color color, String text, String number) {
+  cardWidget(Color color, String text, String number) {
     return Card(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -326,14 +349,15 @@ class _WorldStatesState extends State<WorldStates>
                   width: 20,
                 ),
                 Text(
-                  '$text',
-                  style: TextStyle(fontSize: 18, color: Colors.blueAccent),
+                  text,
+                  style:
+                      const TextStyle(fontSize: 18, color: Colors.blueAccent),
                 )
               ],
             ),
             Text(
-              '$number',
-              style: TextStyle(
+              number,
+              style: const TextStyle(
                   fontSize: 18,
                   color: Colors.black87,
                   fontWeight: FontWeight.w600),

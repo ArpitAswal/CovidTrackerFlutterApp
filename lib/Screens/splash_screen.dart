@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:covid_tracker/Screens/world_states.dart';
+import 'package:CovidTracker/Screens/world_states.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
@@ -13,7 +13,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
-    duration: const Duration(seconds: 5),
+    duration: const Duration(seconds: 3),
     vsync: this,
   )..repeat();
 
